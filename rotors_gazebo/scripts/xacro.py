@@ -58,16 +58,22 @@ class XacroException(Exception):
 
 
 def isnumber(x):
+    """"""
+    
     return hasattr(x, '__int__')
 
 
 def eval_extension(str):
+    """"""
+    
     return substitution_args.resolve_args(str, context=substitution_args_context, resolve_anon=False)
 
 
 # Better pretty printing of xml
 # Taken from http://ronrothman.com/public/leftbraned/xml-dom-minidom-toprettyxml-and-silly-whitespace/
 def fixed_writexml(self, writer, indent="", addindent="", newl=""):
+    """"""
+    
     # indent = current indentation
     # addindent = indentation to add to higher levels
     # newl = newline string
@@ -104,10 +110,14 @@ xml.dom.minidom.Element.writexml = fixed_writexml
 
 class Table:
     def __init__(self, parent=None):
+        """"""
+        
         self.parent = parent
         self.table = {}
 
     def __getitem__(self, key):
+        """"""
+        
         if key in self.table:
             return self.table[key]
         elif self.parent:
@@ -116,9 +126,13 @@ class Table:
             raise KeyError(key)
 
     def __setitem__(self, key, value):
+        """"""
+        
         self.table[key] = value
 
     def __contains__(self, key):
+        """"""
+        
         return \
             key in self.table or \
             (self.parent and key in self.parent)
@@ -126,6 +140,18 @@ class Table:
 
 class QuickLexer(object):
     def __init__(self, **res):
+        """Initialize a class with attributes from the provided dictionary.
+        Parameters:
+            - res (dict): Dictionary of attributes and values to be added to the class.
+        Returns:
+            - None: The function does not return anything.
+        Processing Logic:
+            - Set the initial value of the class attribute "str" to an empty string.
+            - Set the initial value of the class attribute "top" to None.
+            - Loop through the key-value pairs in the provided dictionary.
+            - Set the attribute name as the key and its index in the "res" list as its value.
+            - Append the value to the "res" list."""
+        
         self.str = ""
         self.top = None
         self.res = []
@@ -134,14 +160,30 @@ class QuickLexer(object):
             self.res.append(v)
 
     def lex(self, str):
+        """"""
+        
         self.str = str
         self.top = None
         self.next()
 
     def peek(self):
+        """.value
+        "Returns the value of the top element in the stack."
+        Parameters:
+            - self (Stack): The stack object.
+        Returns:
+            - value: The value of the top element in the stack.
+        Processing Logic:
+            - Get the value of the top element.
+            - No parameters are needed.
+            - Returns the value of the top element.
+            - Can be used to check the next element without removing it from the stack."""
+        
         return self.top
 
     def next(self):
+        """"""
+        
         result = self.top
         self.top = None
         for i in range(len(self.res)):
@@ -154,6 +196,8 @@ class QuickLexer(object):
 
 
 def first_child_element(elt):
+    """"""
+    
     c = elt.firstChild
     while c:
         if c.nodeType == xml.dom.Node.ELEMENT_NODE:
@@ -163,6 +207,18 @@ def first_child_element(elt):
 
 
 def next_sibling_element(elt):
+    """"Returns the next sibling element of the given element, if it exists. If not, returns None."
+    Parameters:
+        - elt (xml.dom.Node): The element whose next sibling element is to be found.
+    Returns:
+        - xml.dom.Node: The next sibling element of the given element, if it exists. Otherwise, returns None.
+    Processing Logic:
+        - Get the next sibling of the given element.
+        - Check if the next sibling is an element node.
+        - If yes, return the next sibling element.
+        - If not, continue to the next sibling.
+        - If no next sibling element is found, return None."""
+    
     c = elt.nextSibling
     while c:
         if c.nodeType == xml.dom.Node.ELEMENT_NODE:
@@ -173,6 +229,8 @@ def next_sibling_element(elt):
 
 # Pre-order traversal of the elements
 def next_element(elt):
+    """"""
+    
     child = first_child_element(elt)
     if child:
         return child
@@ -186,6 +244,18 @@ def next_element(elt):
 
 # Pre-order traversal of all the nodes
 def next_node(node):
+    """Returns the next sibling node or the first child node if there is no next sibling node.
+    Parameters:
+        - node (Node): The current node to find the next node from.
+    Returns:
+        - Node: The next sibling node or the first child node if there is no next sibling node.
+    Processing Logic:
+        - If the current node has a first child, return the first child.
+        - While there is a current node:
+            - If the current node has a next sibling, return the next sibling.
+            - Set the current node to its parent node.
+        - If there is no next sibling or parent node, return None."""
+    
     if node.firstChild:
         return node.firstChild
     while node:
@@ -196,6 +266,8 @@ def next_node(node):
 
 
 def child_nodes(elt):
+    """"""
+    
     c = elt.firstChild
     while c:
         yield c
@@ -215,6 +287,8 @@ include_no_matches_msg = """Include tag filename spec \"{}\" matched no files.""
 
 ## @throws XacroException if a parsing error occurs with an included document
 def process_includes(doc, base_dir):
+    """"""
+    
     namespaces = {}
     previous = doc.documentElement
     elt = next_element(previous)
@@ -292,6 +366,8 @@ def process_includes(doc, base_dir):
 
 # Returns a dictionary: { macro_name => macro_xml_block }
 def grab_macros(doc):
+    """"""
+    
     macros = {}
 
     previous = doc.documentElement
@@ -314,6 +390,8 @@ def grab_macros(doc):
 
 # Returns a Table of the properties
 def grab_properties(doc):
+    """"""
+    
     table = Table()
 
     previous = doc.documentElement
@@ -352,6 +430,8 @@ def grab_properties(doc):
 
 
 def eat_ignore(lex):
+    """"""
+    
     while lex.peek() and lex.peek()[0] == lex.IGNORE:
         lex.next()
 
