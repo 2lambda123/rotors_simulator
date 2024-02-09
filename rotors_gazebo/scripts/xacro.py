@@ -40,10 +40,9 @@ import string
 import sys
 import xml
 
-from xml.dom.minidom import parse
-
 import substitution_args
 from names import load_mappings
+import defusedxml.minidom
 
 try:
     _basestr = basestring
@@ -262,7 +261,7 @@ def process_includes(doc, base_dir):
                 try:
                     with open(filename) as f:
                         try:
-                            included = parse(f)
+                            included = defusedxml.minidom.parse(f)
                         except Exception as e:
                             raise XacroException(
                                 "included file \"%s\" generated an error during XML parsing: %s"
@@ -673,7 +672,7 @@ def main():
     f = open(args[0])
     doc = None
     try:
-        doc = parse(f)
+        doc = defusedxml.minidom.parse(f)
     except xml.parsers.expat.ExpatError:
         sys.stderr.write("Expat parsing error.  Check that:\n")
         sys.stderr.write(" - Your XML is correctly formed\n")
